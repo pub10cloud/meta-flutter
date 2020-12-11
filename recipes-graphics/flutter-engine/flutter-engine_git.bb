@@ -56,8 +56,8 @@ PACKAGECONFIG[mode-profile] = "--runtime-mode profile"
 PACKAGECONFIG[mode-release] = "--runtime-mode release"
 PACKAGECONFIG[mode-jit_release] = "--runtime-mode jit_release"
 
-TARGET_GCC_VERSION = "9.2.0"
-TARGET_CLANG_VERSION = "11.0.0"
+TARGET_GCC_VERSION ?= "9.2.0"
+TARGET_CLANG_VERSION ?= "11.0.0"
 
 GN_ARGS = " \
   ${PACKAGECONFIG_CONFARGS} \
