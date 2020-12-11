@@ -34,7 +34,7 @@ def gn_host_arch_name(d):
 # instead of "i586") and then use gn_target_arch_name() to return the right
 # value with some validation.
 GN_TARGET_ARCH_NAME_aarch64 = "arm64"
-GN_TARGET_ARCH_NAME_arm = "arm64" # this is workaround
+GN_TARGET_ARCH_NAME_arm = "arm"
 GN_TARGET_ARCH_NAME_x86 = "x86"
 GN_TARGET_ARCH_NAME_x86-64 = "x64"
 
