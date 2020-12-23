@@ -6,6 +6,7 @@ LIC_FILES_CHKSUM = "file://flutter/LICENSE;md5=a60894397335535eb10b54e2fff9f265"
 SRCREV = "9e5072f0ce81206b99db3598da687a19ce57a863"
 
 FILESEXTRAPATHS_prepend_poky := "${THISDIR}/files:"
+ENGINE_URI ?= "git@github.com:flutter/engine.git"
 SRC_URI = "file://sysroot_gni.patch \
            file://custom_BUILD_gn.patch \
            file://icu.patch \
@@ -77,7 +78,7 @@ do_patch() {
         {
             "managed" : False,
             "name" : "src/flutter",
-            "url" : "git@github.com:flutter/engine.git",
+            "url" : "'${ENGINE_URI}'",
             "custom_vars" : {
                 "download_android_deps" : False,
                 "download_windows_deps" : False,
