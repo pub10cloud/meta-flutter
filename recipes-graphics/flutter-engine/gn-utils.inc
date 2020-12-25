@@ -53,6 +53,7 @@ def gn_clang_triple_prefix(d):
     import re
     arch_translations = {
         r'aarch64.*': 'aarch64-unknown-linux-gnu',
+        r'arm64.*': 'aarch64-unknown-linux-gnu',
         r'arm.*': 'armv7-unknown-linux-gnueabihf',
         r'i[3456]86$': 'i386-unknown-linux-gnu',
         r'x86_64$': 'x86_64-unknown-linux-gnu',
