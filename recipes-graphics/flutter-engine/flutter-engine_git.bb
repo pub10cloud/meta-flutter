@@ -66,6 +66,8 @@ GN_ARGS = " \
   --target-toolchain ${S}/buildtools/linux-x64/clang \
   "
 
+GCLIENT_SYNC_OPT ?= "--nohooks --no-history"
+
 do_patch() {
 
     export CURL_CA_BUNDLE=${STAGING_BINDIR_NATIVE}/depot_tools/ca-certificates.crt
@@ -79,6 +81,7 @@ do_patch() {
             "managed" : False,
             "name" : "src/flutter",
             "url" : "'${ENGINE_URI}'",
+            "revision": "'${SRCREV}'",
             "custom_vars" : {
                 "download_android_deps" : False,
                 "download_windows_deps" : False,
@@ -100,7 +103,7 @@ do_patch() {
     fi
 
     cd ${S}
-    gclient.py sync --nohooks --no-history --revision ${SRCREV} ${PARALLEL_MAKE} -v
+    gclient.py sync ${GCLIENT_SYNC_OPT} ${PARALLEL_MAKE} -v
     git apply ../../sysroot_gni.patch
     git apply ../../custom_BUILD_gn.patch
 
