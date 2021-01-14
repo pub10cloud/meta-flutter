@@ -66,7 +66,7 @@ GN_ARGS = " \
   --target-toolchain ${S}/buildtools/linux-x64/clang \
   "
 
-GCLIENT_SYNC_OPT ?= "--nohooks --no-history"
+GCLIENT_SYNC_OPT ?= "--nohooks --no-history --revision ${SRCREV}"
 
 do_patch() {
 
@@ -81,7 +81,6 @@ do_patch() {
             "managed" : False,
             "name" : "src/flutter",
             "url" : "'${ENGINE_URI}'",
-            "revision": "'${SRCREV}'",
             "custom_vars" : {
                 "download_android_deps" : False,
                 "download_windows_deps" : False,
