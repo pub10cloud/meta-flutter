@@ -6,6 +6,7 @@ LIC_FILES_CHKSUM = "file://flutter/LICENSE;md5=a60894397335535eb10b54e2fff9f265"
 SRCREV = "9e5072f0ce81206b99db3598da687a19ce57a863"
 
 FILESEXTRAPATHS_prepend_poky := "${THISDIR}/files:"
+ENGINE_URI ?= "git@github.com:flutter/engine.git"
 SRC_URI = "file://sysroot_gni.patch \
            file://custom_BUILD_gn.patch \
            file://icu.patch \
@@ -67,6 +68,8 @@ GN_ARGS = " \
   --target-toolchain ${S}/buildtools/linux-x64/clang \
   "
 
+GCLIENT_SYNC_OPT ?= "--nohooks --no-history --revision ${SRCREV}"
+
 do_patch() {
 
     export CURL_CA_BUNDLE=${STAGING_BINDIR_NATIVE}/depot_tools/ca-certificates.crt
@@ -79,7 +82,7 @@ do_patch() {
         {
             "managed" : False,
             "name" : "src/flutter",
-            "url" : "git@github.com:flutter/engine.git",
+            "url" : "'${ENGINE_URI}'",
             "custom_vars" : {
                 "download_android_deps" : False,
                 "download_windows_deps" : False,
@@ -101,7 +104,7 @@ do_patch() {
     fi
 
     cd ${S}
-    gclient.py sync --nohooks --no-history --revision ${SRCREV} ${PARALLEL_MAKE} -v
+    gclient.py sync ${GCLIENT_SYNC_OPT} ${PARALLEL_MAKE} -v
     git apply ../../sysroot_gni.patch
     git apply ../../custom_BUILD_gn.patch
 
@@ -121,7 +124,8 @@ ARGS_GN_APPEND = " \
 
 FLUTTER_TRIPLE = "${@gn_clang_triple_prefix(d)}"
 
-
+TARGET_GCC_VERSION ?= "9.2.0"
+TARGET_CLANG_VERSION ?= "11.0.0"
 do_configure() {
 
     bbnote "./flutter/tools/gn ${GN_ARGS}"
