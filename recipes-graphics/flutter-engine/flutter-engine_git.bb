@@ -3,8 +3,6 @@ DESCRIPTION = "Flutter Engine"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://flutter/LICENSE;md5=a60894397335535eb10b54e2fff9f265"
 
-SRCREV = "9e5072f0ce81206b99db3598da687a19ce57a863"
-
 FILESEXTRAPATHS_prepend_poky := "${THISDIR}/files:"
 ENGINE_URI ?= "git@github.com:flutter/engine.git"
 SRC_URI = "file://sysroot_gni.patch \
@@ -67,7 +65,8 @@ GN_ARGS = " \
   --target-toolchain ${S}/buildtools/linux-x64/clang \
   "
 
-GCLIENT_SYNC_OPT ?= "--nohooks --no-history --revision ${SRCREV}"
+# don't use --nohooks because it causes a compile error
+GCLIENT_SYNC_OPT ?= "--no-history"
 
 do_patch() {
 
@@ -76,12 +75,18 @@ do_patch() {
     export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
     export SSH_AGENT_PID=${SSH_AGENT_PID}
 
+    ENGINE_REV=$(cat ${STAGING_DATADIR_NATIVE}/flutter/sdk/bin/internal/engine.version)
+
     cd ${S}/..
+
     gclient.py config --spec 'solutions = [
         {
             "managed" : False,
             "name" : "src/flutter",
             "url" : "'${ENGINE_URI}'",
+            "revision": "'${ENGINE_REV}'",
+            "deps_file": "DEPS",
+            "safesync_url": "",
             "custom_vars" : {
                 "download_android_deps" : False,
                 "download_windows_deps" : False,
@@ -124,7 +129,7 @@ ARGS_GN_APPEND = " \
 FLUTTER_TRIPLE = "${@gn_clang_triple_prefix(d)}"
 
 TARGET_GCC_VERSION ?= "9.2.0"
-TARGET_CLANG_VERSION ?= "11.0.0"
+TARGET_CLANG_VERSION ?= "13.0.0"
 do_configure() {
 
     bbnote "./flutter/tools/gn ${GN_ARGS}"
