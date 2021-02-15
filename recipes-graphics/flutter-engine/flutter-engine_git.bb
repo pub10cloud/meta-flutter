@@ -9,7 +9,6 @@ FILESEXTRAPATHS_prepend_poky := "${THISDIR}/files:"
 ENGINE_URI ?= "git@github.com:flutter/engine.git"
 SRC_URI = "file://sysroot_gni.patch \
            file://custom_BUILD_gn.patch \
-           file://icu.patch \
            "
 
 S = "${WORKDIR}/git/src"
@@ -107,9 +106,6 @@ do_patch() {
     gclient.py sync ${GCLIENT_SYNC_OPT} ${PARALLEL_MAKE} -v
     git apply ../../sysroot_gni.patch
     git apply ../../custom_BUILD_gn.patch
-
-    cd third_party/icu
-    git apply ../../../../icu.patch
 }
 do_patch[depends] =+ " \
     depot-tools-native:do_populate_sysroot \
