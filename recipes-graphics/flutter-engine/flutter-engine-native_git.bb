@@ -11,42 +11,16 @@ S = "${WORKDIR}/git/src"
 
 inherit python3native native
 
-DEPENDS =+ " flutter-engine ninja-native depot-tools-native"
-
 require gn-utils.inc
+require flutter-engine.inc
+
+DEPENDS =+ " flutter-engine"
 
 COMPATIBLE_MACHINE = "(-)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
 GN_ARGS = ""
-
-do_patch() {
-
-    export CURL_CA_BUNDLE=${STAGING_BINDIR_NATIVE}/depot_tools/ca-certificates.crt
-    export PATH=${STAGING_BINDIR_NATIVE}/depot_tools:${PATH}
-    export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
-    export SSH_AGENT_PID=${SSH_AGENT_PID}
-
-    cd ${S}/..
-    gclient.py config --spec 'solutions = [
-        {
-            "managed" : False,
-            "name" : "src/flutter",
-            "url" : "'${ENGINE_URI}'",
-            "custom_vars" : {
-                "download_android_deps" : False,
-                "download_windows_deps" : False,
-            }
-        }
-    ]'
-
-    cd ${S}
-    gclient.py sync --no-history --revision ${SRCREV} ${PARALLEL_MAKE} -v
-}
-do_patch[depends] =+ " \
-    depot-tools-native:do_populate_sysroot \
-    "
 
 do_configure() {
 
