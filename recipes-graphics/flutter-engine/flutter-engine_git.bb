@@ -13,9 +13,10 @@ S = "${WORKDIR}/git/src"
 
 inherit python3native
 
-DEPENDS =+ " ninja-native depot-tools-native freetype flutter-sdk-native tar-native xz-native"
-
 require gn-utils.inc
+require flutter-engine.inc
+
+DEPENDS =+ " freetype"
 
 COMPATIBLE_MACHINE = "(-)"
 COMPATIBLE_MACHINE_aarch64 = "(.*)"
@@ -65,59 +66,11 @@ GN_ARGS = " \
   --target-toolchain ${S}/buildtools/linux-x64/clang \
   "
 
-# don't use --nohooks because it causes a compile error
-GCLIENT_SYNC_OPT ?= "--no-history"
-
 do_patch() {
-
-    export CURL_CA_BUNDLE=${STAGING_BINDIR_NATIVE}/depot_tools/ca-certificates.crt
-    export PATH=${STAGING_BINDIR_NATIVE}/depot_tools:${PATH}
-    export SSH_AUTH_SOCK=${SSH_AUTH_SOCK}
-    export SSH_AGENT_PID=${SSH_AGENT_PID}
-
-    ENGINE_REV=$(cat ${STAGING_DATADIR_NATIVE}/flutter/sdk/bin/internal/engine.version)
-
-    cd ${S}/..
-
-    gclient.py config --spec 'solutions = [
-        {
-            "managed" : False,
-            "name" : "src/flutter",
-            "url" : "'${ENGINE_URI}'",
-            "revision": "'${ENGINE_REV}'",
-            "deps_file": "DEPS",
-            "safesync_url": "",
-            "custom_vars" : {
-                "download_android_deps" : False,
-                "download_windows_deps" : False,
-            }
-        }
-    ]'
-
     cd ${S}
-    if test -f "build/config/sysroot.gni"; then
-        git checkout build/config/sysroot.gni
-    fi
-    if test -f "build/toolchain/custom/BUILD.gn"; then
-        git checkout build/toolchain/custom/BUILD.gn
-    fi
-
-    [ -d "third_party/icu" ] && cd third_party/icu
-    if test -f "source/i18n/plurrule.cpp"; then
-        git checkout source/i18n/plurrule.cpp
-    fi
-
-    cd ${S}
-    gclient.py sync ${GCLIENT_SYNC_OPT} ${PARALLEL_MAKE} -v
     git apply ../../sysroot_gni.patch
     git apply ../../custom_BUILD_gn.patch
 }
-do_patch[depends] =+ " \
-    depot-tools-native:do_populate_sysroot \
-    flutter-sdk-native:do_populate_sysroot \
-    tar-native:do_populate_sysroot \
-    xz-native:do_populate_sysroot \
-    "
 
 ARGS_GN_FILE = "${S}/${@get_out_dir(d)}/args.gn"
 
@@ -129,7 +82,7 @@ ARGS_GN_APPEND = " \
 FLUTTER_TRIPLE = "${@gn_clang_triple_prefix(d)}"
 
 TARGET_GCC_VERSION ?= "9.2.0"
-TARGET_CLANG_VERSION ?= "13.0.0"
+TARGET_CLANG_VERSION ?= "11.0.0"
 do_configure() {
 
     bbnote "./flutter/tools/gn ${GN_ARGS}"
