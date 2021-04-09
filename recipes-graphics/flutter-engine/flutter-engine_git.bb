@@ -25,25 +25,33 @@ COMPATIBLE_MACHINE_armv7ve = "(.*)"
 COMPATIBLE_MACHINE_x86 = "(.*)"
 COMPATIBLE_MACHINE_x86-64 = "(.*)"
 
-PACKAGECONFIG ??= "embedder-for-target full-dart-sdk fontconfig skshaper stripped lto"
+PACKAGECONFIG ??= "embedder-for-target full-dart-sdk fontconfig skshaper stripped lto no-goma"
 
 PACKAGECONFIG[clang] = "--clang"
+PACKAGECONFIG[no-clang] = "--no-clang"
 PACKAGECONFIG[static-analyzer] = "--clang-static-analyzer"
+PACKAGECONFIG[no-static-analyzer] = "--no-clang-static-analyzer"
 PACKAGECONFIG[unoptimized] = "--unoptimized"
 PACKAGECONFIG[dart-debug] = "--dart-debug"
 PACKAGECONFIG[full-dart-debug] = "--full-dart-debug"
 PACKAGECONFIG[full-dart-sdk] = "--full-dart-sdk"
+PACKAGECONFIG[no-full-dart-sdk] = "--no-full-dart-sdk"
 PACKAGECONFIG[build-glfw-shell] = "--build-glfw-shell"
+PACKAGECONFIG[no-build-glfw-shell] = "--no-build-glfw-shell"
 PACKAGECONFIG[vulkan] = "--enable-vulkan"
 PACKAGECONFIG[vulkan-validation-layers] = "--enable-vulkan-validation-layers"
 PACKAGECONFIG[fontconfig] = "--enable-fontconfig"
 PACKAGECONFIG[skshaper] = "--enable-skshaper"
+PACKAGECONFIG[no-skshaper] = "--no-enable-skshaper"
 PACKAGECONFIG[embedder-for-target] = "--embedder-for-target"
 PACKAGECONFIG[lto] = "--lto"
+PACKAGECONFIG[no-lto] = "--no-lto"
 PACKAGECONFIG[stripped] = "--stripped"
+PACKAGECONFIG[no-stripped] = "--no-stripped"
 PACKAGECONFIG[coverage] = "--coverage"
 PACKAGECONFIG[interpreter] = "--interpreter"
-PACKAGECONFIG[goma] = "--goma"
+PACKAGECONFIG[goma] = "--goma,--no-goma,"
+PACKAGECONFIG[no-goma] = "--no-goma"
 PACKAGECONFIG[asan] = "--asan"
 PACKAGECONFIG[lsan] = "--lsan"
 PACKAGECONFIG[msan] = "--msan"
@@ -53,9 +61,7 @@ PACKAGECONFIG[mode-debug] = "--runtime-mode debug"
 PACKAGECONFIG[mode-profile] = "--runtime-mode profile"
 PACKAGECONFIG[mode-release] = "--runtime-mode release"
 PACKAGECONFIG[mode-jit_release] = "--runtime-mode jit_release"
-
-TARGET_GCC_VERSION ?= "9.2.0"
-TARGET_CLANG_VERSION ?= "11.0.0"
+PACKAGECONFIG[no-dart-version-git-info] = "--no-dart-version-git-info"
 
 GN_ARGS = " \
   ${PACKAGECONFIG_CONFARGS} \
@@ -81,8 +87,8 @@ ARGS_GN_APPEND = " \
 
 FLUTTER_TRIPLE = "${@gn_clang_triple_prefix(d)}"
 
-TARGET_GCC_VERSION ?= "9.2.0"
-TARGET_CLANG_VERSION ?= "11.0.0"
+TARGET_GCC_VERSION ?= "9.3.0"
+TARGET_CLANG_VERSION ?= "12.0.0"
 do_configure() {
 
     bbnote "./flutter/tools/gn ${GN_ARGS}"

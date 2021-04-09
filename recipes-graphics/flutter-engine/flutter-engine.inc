@@ -1,5 +1,5 @@
-GCLIENT_SYNC_OPT = "--force --reset -D --no-history "
-GCLIENT_RUNHOOKS_OPT = ""
+GCLIENT_SYNC_OPT ?= "--force --reset -D --no-history "
+GCLIENT_RUNHOOKS_OPT ?= ""
 
 DEPENDS =+ " ninja-native depot-tools-native flutter-sdk-native tar-native xz-native"
 
